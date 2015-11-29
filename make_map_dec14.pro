@@ -1,4 +1,4 @@
-pro make_map_dec14,pid=pid,maindir=maindir,grdid=grdid,erang=erang,plot=plot,timer=timer
+pro make_map_dec14,pid=pid,maindir=maindir,grdid=grdid,erang=erang,plot=plot,timer=timer,bad=bad
 
   ;  Make the livetime corrected map in a given energy and time range for the December data
   ;  So map units are counts/s/pixel (livetime corrected)
@@ -16,12 +16,14 @@ pro make_map_dec14,pid=pid,maindir=maindir,grdid=grdid,erang=erang,plot=plot,tim
   ;                  (default is >2 keV)
   ;         plot    Want to plot the maps? (default no)
   ;         timer   timerange to calculate map over (default whole time range)
+  ;         bad     remove the "bad" pixels in FPMA (default no)
   ;
   ;         For non-IGH use need to change
   ;         maindir - where Dec data is kept - maindir of the ftp structed dirs
   ;
   ;
   ; 20-Nov-2015 IGH
+  ; 28-Nov-2015 IGH Added in option to remove /bad pixels in A based on Nov pointing
   ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   if (n_elements(pid) ne 1) then pid=0
@@ -183,6 +185,34 @@ pro make_map_dec14,pid=pid,maindir=maindir,grdid=grdid,erang=erang,plot=plot,tim
 
   ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ; Do FPMA
+
+  if keyword_set(bad) then begin
+    ; Before doing anything else need to filter out the "bad" pixels in FPMA
+    ; these were the ones BG had previously identified - caused the "hard knots" in the data
+    ; https://github.com/NuSTAR/nustar_solar/blob/master/solar_mosaic_20141211/combine_events.pro
+
+    use = bytarr(n_elements(evta)) + 1
+    thisdet = where(evta.det_id eq 2)
+    badones = where(evta[thisdet].rawx eq 16 and evta[thisdet].rawy eq 5, nbad)
+    if nbad gt 0 then use[thisdet[badones]]=0
+    badones = where(evta[thisdet].rawx eq 24 and evta[thisdet].rawy eq 22, nbad)
+    if nbad gt 0 then use[thisdet[badones]]=0
+
+    thisdet = where(evta.det_id eq 3)
+    badones = where(evta[thisdet].rawx eq 22 and evta[thisdet].rawy eq 1, nbad)
+    if nbad gt 0 then use[thisdet[badones]]=0
+    badones = where(evta[thisdet].rawx eq 15 and evta[thisdet].rawy eq 3, nbad)
+    if nbad gt 0 then use[thisdet[badones]]=0
+    badones = where(evta[thisdet].rawx eq 0 and evta[thisdet].rawy eq 15, nbad)
+    if nbad gt 0 then use[thisdet[badones]]=0
+
+    evta=evta[where(use)]
+    bdnm='BPR_'
+  endif else begin
+    bdnm=''
+  endelse
+
+
   engs=a_engs
   evtx=evta.x-xshf
   evty=evta.y-yshf
@@ -214,10 +244,10 @@ pro make_map_dec14,pid=pid,maindir=maindir,grdid=grdid,erang=erang,plot=plot,tim
   ima2_lvt=ims/(float(lvtcora)*dur)
 
   mapa=make_map(ima2_lvt,dx=pxs,dy=pxs,xc=newxc,yc=newyc,$
-    time=time,dur=dur,id='LC FPMA '+grdname+' '+eid+string(lvtcora*100,format='(f6.2)')+'%',$
+    time=time,dur=dur,id='LC FPMA '+grdname+' '+bdnm+' '+eid+string(lvtcora*100,format='(f6.2)')+'%',$
     l0=l0,b0=ang[1],rsun=ang[2])
 
-  map2fits,mapa,'out_files/maps_'+pname+grdname+enme+'_A_'+break_time(timer[0])+'.fits'
+  map2fits,mapa,'out_files/maps_'+pname+grdname+enme+'_A_'+bdnm+break_time(timer[0])+'.fits'
 
   ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ; Do FPMB
@@ -267,6 +297,6 @@ pro make_map_dec14,pid=pid,maindir=maindir,grdid=grdid,erang=erang,plot=plot,tim
     plot_map,mapb,/log,chars=1.5,tit=mapb.id,/limb,grid_spacing=15
   endif
 
-;  stop
+  ;  stop
 
 end
