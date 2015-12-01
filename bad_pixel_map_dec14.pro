@@ -10,13 +10,13 @@ pro bad_pixel_map_dec14,pid=pid,maindir=maindir,erang=erang,timer=timer
   ;
   ;         For non-IGH use need to change
   ;         maindir - where Dec data is kept - maindir of the ftp structed dirs
-  ;         
+  ;
   ;         For testing of AR pointing
   ;         bad_pixel_map_dec14,pid=0,timer='11-Dec-2014 '+['18:45','18:55']
-  ;         
+  ;
   ;         For testing of NP pointing
   ;         bad_pixel_map_dec14,pid=1,timer='11-Dec-2014 '+['19:25','19:35']
-  ;         
+  ;
   ;
   ; 01-Dec-2015 IGH
   ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -136,14 +136,14 @@ pro bad_pixel_map_dec14,pid=pid,maindir=maindir,erang=erang,timer=timer
   ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ; Make histogram for each of the detectors
   ; This is just an issue for FPMA ??
-  
+
   ; Detector config figure is Figure 3 in http://heasarc.gsfc.nasa.gov/docs/nustar/analysis/nustar_swguide.pdf
-  
+
   npix=32
   hha=intarr(4,npix,npix)
   hhb=intarr(4,npix,npix)
 
-  
+
   for i=0, 3 do begin
     id0=where(evta.det_id eq i)
     evtrx=evta[id0].rawx
@@ -152,7 +152,7 @@ pro bad_pixel_map_dec14,pid=pid,maindir=maindir,erang=erang,timer=timer
     hh_1d = histogram(pixinds, min = 0, max = npix*npix-1, binsize = 1)
     hha[i,*,*]=reform(hh_1d, npix, npix)
   endfor
-  
+
   for i=0, 3 do begin
     id0=where(evtb.det_id eq i)
     evtrx=evtb[id0].rawx
@@ -161,21 +161,19 @@ pro bad_pixel_map_dec14,pid=pid,maindir=maindir,erang=erang,timer=timer
     hh_1d = histogram(pixinds, min = 0, max = npix*npix-1, binsize = 1)
     hhb[i,*,*]=reform(hh_1d, npix, npix)
   endfor
-   
+
   !p.multi=[0,2,2]
+  !p.charsize=1.5
   plid=[1,0,2,3]
-  xxs=['-x','y','-y','x']
-  yys=['y','x','-x','-y']
   loadct,39,/silent
   for i=0, 3 do plot_image,reform(hha[plid[i],*,*]),min=0,max=15,$
-    title='A Det '+string(plid[i],format='(i1)'),xtitle=xxs[i],ytitle=yys[i]
+    title='A Det '+string(plid[i],format='(i1)')
   xyouts,10,50,enme,/device
   xyouts,10,10,timer[0],/device
-  
+
   stop
-  
+
   !p.multi=[0,2,2]
-  !p.charsize=2
   plid=[1,0,2,3]
   xxs=['-x','y','-y','x']
   yys=['y','x','-x','-y']
@@ -184,34 +182,34 @@ pro bad_pixel_map_dec14,pid=pid,maindir=maindir,erang=erang,timer=timer
     title='B Det '+string(plid[i],format='(i1)'),xtitle=xxs[i],ytitle=yys[i]
   xyouts,10,50,enme,/device
   xyouts,10,10,timer[0],/device
-  
+
   stop
-  
-;  ; what has previously been found as "bad"
-;  if keyword_set(bad) then begin
-;    ; Before doing anything else need to filter out the "bad" pixels in FPMA
-;    ; these were the ones BG had previously identified - caused the "hard knots" in the data
-;    ; https://github.com/NuSTAR/nustar_solar/blob/master/solar_mosaic_20141211/combine_events.pro
-;
-;    use = bytarr(n_elements(evta)) + 1
-;    thisdet = where(evta.det_id eq 2)
-;    badones = where(evta[thisdet].rawx eq 16 and evta[thisdet].rawy eq 5, nbad)
-;    if nbad gt 0 then use[thisdet[badones]]=0
-;    badones = where(evta[thisdet].rawx eq 24 and evta[thisdet].rawy eq 22, nbad)
-;    if nbad gt 0 then use[thisdet[badones]]=0
-;
-;    thisdet = where(evta.det_id eq 3)
-;    badones = where(evta[thisdet].rawx eq 22 and evta[thisdet].rawy eq 1, nbad)
-;    if nbad gt 0 then use[thisdet[badones]]=0
-;    badones = where(evta[thisdet].rawx eq 15 and evta[thisdet].rawy eq 3, nbad)
-;    if nbad gt 0 then use[thisdet[badones]]=0
-;    badones = where(evta[thisdet].rawx eq 0 and evta[thisdet].rawy eq 15, nbad)
-;    if nbad gt 0 then use[thisdet[badones]]=0
-;
-;    evta=evta[where(use)]
-;    bdnm='BPR_'
-;  endif
-  
+
+  ;  ; what has previously been found as "bad"
+  ;  if keyword_set(bad) then begin
+  ;    ; Before doing anything else need to filter out the "bad" pixels in FPMA
+  ;    ; these were the ones BG had previously identified - caused the "hard knots" in the data
+  ;    ; https://github.com/NuSTAR/nustar_solar/blob/master/solar_mosaic_20141211/combine_events.pro
+  ;
+  ;    use = bytarr(n_elements(evta)) + 1
+  ;    thisdet = where(evta.det_id eq 2)
+  ;    badones = where(evta[thisdet].rawx eq 16 and evta[thisdet].rawy eq 5, nbad)
+  ;    if nbad gt 0 then use[thisdet[badones]]=0
+  ;    badones = where(evta[thisdet].rawx eq 24 and evta[thisdet].rawy eq 22, nbad)
+  ;    if nbad gt 0 then use[thisdet[badones]]=0
+  ;
+  ;    thisdet = where(evta.det_id eq 3)
+  ;    badones = where(evta[thisdet].rawx eq 22 and evta[thisdet].rawy eq 1, nbad)
+  ;    if nbad gt 0 then use[thisdet[badones]]=0
+  ;    badones = where(evta[thisdet].rawx eq 15 and evta[thisdet].rawy eq 3, nbad)
+  ;    if nbad gt 0 then use[thisdet[badones]]=0
+  ;    badones = where(evta[thisdet].rawx eq 0 and evta[thisdet].rawy eq 15, nbad)
+  ;    if nbad gt 0 then use[thisdet[badones]]=0
+  ;
+  ;    evta=evta[where(use)]
+  ;    bdnm='BPR_'
+  ;  endif
+
 
 
   ;  stop
