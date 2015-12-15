@@ -1,4 +1,4 @@
-pro make_map_dec14,pid=pid,maindir=maindir,grdid=grdid,erang=erang,plot=plot,timer=timer,bad=bad
+pro make_map_dec14,pid=pid,maindir=maindir,grdid=grdid,erang=erang,plot=plot,timer=timer,bad=bad,chuid=chuid
 
   ;  Make the livetime corrected map in a given energy and time range for the December data
   ;  So map units are counts/s/pixel (livetime corrected)
@@ -17,6 +17,7 @@ pro make_map_dec14,pid=pid,maindir=maindir,grdid=grdid,erang=erang,plot=plot,tim
   ;         plot    Want to plot the maps? (default no)
   ;         timer   timerange to calculate map over (default whole time range)
   ;         bad     remove the "bad" pixels in FPMA (default no)
+  ;         chuid   which chuid state ? (default is CHU12 for AR, CHU23 for NP)
   ;
   ;         For non-IGH use need to change
   ;         maindir - where Dec data is kept - maindir of the ftp structed dirs
@@ -24,6 +25,7 @@ pro make_map_dec14,pid=pid,maindir=maindir,grdid=grdid,erang=erang,plot=plot,tim
   ;
   ; 20-Nov-2015 IGH
   ; 28-Nov-2015 IGH Added in option to remove /bad pixels in A based on Nov pointing
+  ; 15-Dec-2015 IGH Added in chuid option and corrected submap for north pole region
   ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   if (n_elements(pid) ne 1) then pid=0
@@ -69,8 +71,8 @@ pro make_map_dec14,pid=pid,maindir=maindir,grdid=grdid,erang=erang,plot=plot,tim
   ; For NP in CHU23 (13), CHU3 (9), CHU13 (10)
   chm=[5,13,9,10]
   chmn=['CHU12','CHU23','CHU3','CHU13']
-  chumask=chm[pid]
-  chunam=chmn[pid]
+  if (n_elements(chuid) eq 1) then chumask=chm[chuid] else chumask=chm[pid]
+  if (n_elements(chuid) eq 1) then chunam=chmn[chuid] else chunam=chmn[pid]
 
   ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ; Get the *_cl_sunpost.evt files
@@ -226,8 +228,15 @@ pro make_map_dec14,pid=pid,maindir=maindir,grdid=grdid,erang=erang,plot=plot,tim
   ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   npp=n_elements(ims[0,*])
   ; Can take an even smaller region so map not as big
-  subx=[1050,1550]
-  suby=[500,1000]
+  if (pid eq 0) then begin
+    subx=[1050,1550]
+    suby=[500,1000]
+  endif
+  if (pid eq 1) then begin
+    subx=[800,1300]
+    suby=[1000,1500]
+  endif
+
   ims=ims[subx[0]:subx[1],suby[0]:suby[1]]
 
   pxs=pix_size
@@ -265,8 +274,14 @@ pro make_map_dec14,pid=pid,maindir=maindir,grdid=grdid,erang=erang,plot=plot,tim
   npp=n_elements(ims[0,*])
   ; Can take an even smaller region which covers all 4 pointings
   ; file output should then "only" be about 0.6GB not 2.6GB!
-  subx=[1050,1550]
-  suby=[500,1000]
+  if (pid eq 0) then begin
+    subx=[1050,1550]
+    suby=[500,1000]
+  endif
+  if (pid eq 1) then begin
+    subx=[800,1300]
+    suby=[1000,1500]
+  endif
   ims=ims[subx[0]:subx[1],suby[0]:suby[1]]
 
   pxs=pix_size
@@ -293,10 +308,10 @@ pro make_map_dec14,pid=pid,maindir=maindir,grdid=grdid,erang=erang,plot=plot,tim
   if keyword_set(plot) then begin
     loadct,39,/silent
     !p.multi=[0,2,1]
-    plot_map,mapa,/log,chars=1.5,tit=mapa.id,/limb,grid_spacing=15
-    plot_map,mapb,/log,chars=1.5,tit=mapb.id,/limb,grid_spacing=15
+    plot_map,mapa,/log,chars=1.5,tit=mapa.id,/limb,grid_spacing=15,dmin=0.3,dmax=5
+    plot_map,mapb,/log,chars=1.5,tit=mapb.id,/limb,grid_spacing=15,dmin=0.3,dmax=5
+    xyouts, 10,10,mapa.time,/device
   endif
 
-  ;  stop
 
 end
