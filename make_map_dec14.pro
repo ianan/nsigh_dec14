@@ -1,4 +1,5 @@
-pro make_map_dec14,pid=pid,maindir=maindir,grdid=grdid,erang=erang,plot=plot,timer=timer,bad=bad,chuid=chuid
+pro make_map_dec14,pid=pid,maindir=maindir,grdid=grdid,erang=erang,plot=plot,timer=timer,$
+bad=bad,chuid=chuid,full_area=full_area
 
   ;  Make the livetime corrected map in a given energy and time range for the December data
   ;  So map units are counts/s/pixel (livetime corrected)
@@ -10,14 +11,15 @@ pro make_map_dec14,pid=pid,maindir=maindir,grdid=grdid,erang=erang,plot=plot,tim
   ;         Plot the map
   ;
   ;         Optional inputs:
-  ;         pid     AR2222 or NP pointing ? (default 0='AR2222')
-  ;         grdid   0,1,2 for Event grade 0, all or 21-24 (default grade 0/single-pixel hits)
-  ;         erang   Energy range covered by the map, if only 1 elements then >erang
-  ;                  (default is >2 keV)
-  ;         plot    Want to plot the maps? (default no)
-  ;         timer   timerange to calculate map over (default whole time range)
-  ;         bad     remove the "bad" pixels in FPMA (default no)
-  ;         chuid   which chuid state ? (default is CHU12 for AR, CHU23 for NP)
+  ;         pid         AR2222 or NP pointing ? (default 0='AR2222')
+  ;         grdid       0,1,2 for Event grade 0, all or 21-24 (default grade 0/single-pixel hits)
+  ;         erang       Energy range covered by the map, if only 1 elements then >erang
+  ;                     (default is >2 keV)
+  ;         plot        Want to plot the maps? (default no)
+  ;         timer       timerange to calculate map over (default whole time range)
+  ;         bad         remove the "bad" pixels in FPMA (default no)
+  ;         chuid       which chuid state ? (default is CHU12 for AR, CHU23 for NP)
+  ;         full_area   Keyword to make maps larger covering both NP and AR
   ;
   ;         For non-IGH use need to change
   ;         maindir - where Dec data is kept - maindir of the ftp structed dirs
@@ -26,6 +28,7 @@ pro make_map_dec14,pid=pid,maindir=maindir,grdid=grdid,erang=erang,plot=plot,tim
   ; 20-Nov-2015 IGH
   ; 28-Nov-2015 IGH Added in option to remove /bad pixels in A based on Nov pointing
   ; 15-Dec-2015 IGH Added in chuid option and corrected submap for north pole region
+  ; 18-Jan-2016 IGH Added in keword full_area so maps out cover both NP and AR regions
   ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   if (n_elements(pid) ne 1) then pid=0
@@ -228,13 +231,18 @@ pro make_map_dec14,pid=pid,maindir=maindir,grdid=grdid,erang=erang,plot=plot,tim
   ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   npp=n_elements(ims[0,*])
   ; Can take an even smaller region so map not as big
-  if (pid eq 0) then begin
+   if (pid eq 0) then begin
     subx=[1050,1550]
     suby=[500,1000]
   endif
   if (pid eq 1) then begin
-    subx=[800,1300]
+    subx=[750,1300]
     suby=[1000,1500]
+  endif
+
+  if keyword_set(full_area) then begin
+    subx=[750,1550]
+    suby=[500,1500]
   endif
 
   ims=ims[subx[0]:subx[1],suby[0]:suby[1]]
@@ -272,16 +280,7 @@ pro make_map_dec14,pid=pid,maindir=maindir,grdid=grdid,erang=erang,plot=plot,tim
 
   ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   npp=n_elements(ims[0,*])
-  ; Can take an even smaller region which covers all 4 pointings
-  ; file output should then "only" be about 0.6GB not 2.6GB!
-  if (pid eq 0) then begin
-    subx=[1050,1550]
-    suby=[500,1000]
-  endif
-  if (pid eq 1) then begin
-    subx=[800,1300]
-    suby=[1000,1500]
-  endif
+  
   ims=ims[subx[0]:subx[1],suby[0]:suby[1]]
 
   pxs=pix_size
