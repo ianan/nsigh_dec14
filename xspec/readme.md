@@ -48,7 +48,7 @@ For this example all my data is in: `~/data/ns_data/obs3_bg2/20001005_Sol_14345_
   nuproducts indir=./ instrument=FPMB steminputs=nu20001005001 outdir=./forxspec extended=no runmkarf=yes runmkrmf=yes infile=nu20001005001B06_cl_grade0.evt bkgextract=no srcregionfile=circ_R1B30.reg  attfile=./nu20001005001_att.fits hkfile=./nu20001005001B_fpm.hk usrgtifile=myB06_gti.fits
   ```
 
-5. Load them into XSPEC and do the fitting of one thermal simulataneously to FPMA and FPMB (thanks to Brian for this code)
+5. Load them into XSPEC and do the fitting of one thermal simulataneously to FPMA and FPMB (thanks to Brian for this code) using the following [script](https://github.com/ianan/nsigh_dec14/blob/master/xspec/xspec_th1_fit.xcm)
 	
   ```
   xspec
@@ -73,5 +73,5 @@ For this example all my data is in: `~/data/ns_data/obs3_bg2/20001005_Sol_14345_
   ```
   And the units of norm are `norm=1e-14/(4\pi*(D(1+z))^2) \int n_e n_H dV` so `norm=3.5557e-42 \int n_e n_h dV`. The constant is the scaling factor between FPMA and FPMB as they have a small systematic difference. If the fit is consistent between the two then this value should be close to 1.0
 
-6. Plotting can be done in XSPEC but is not great looking so instead use something else like IDL or Python, the following script does it in SSWIDL, using the newer (>8.4) plotting functions. 
+6. Plotting can be done in XSPEC but is not great looking so instead use something else like IDL or Python, the following [script](https://github.com/ianan/nsigh_dec14/blob/master/xspec/plot_th1_xspec.pro) does it in SSWIDL, using the newer (>8.4) plotting functions. 
 
