@@ -95,11 +95,11 @@ pro plot_th1_xspec_r45
 
   ;  !null=text(400,420,string(t1,format='(f5.2)')+'$\pm$'+$
   ;    string(et1,format='(f5.2)')+' MK ('+string(t1*kev2mk,format='(f5.2)')+' keV)',/device,color=ct1,align=1,font_size=14)
-  !null=text(420,430,string(t1,format='(f5.2)')+'$\pm$'+$
+  !null=text(420,430,string(t1,format='(f5.2)')+'$ \pm $'+$
     string(et1,format='(f5.2)')+' MK',/device,color=ct1,align=1,font_size=14)
-  !null=text(420,405,string(em1*1d-46,format='(f5.2)')+'$\pm$'+string(eem1*1d-46,format='(f5.2)')+$
+  !null=text(420,405,string(em1*1d-46,format='(f5.2)')+'$ \pm $'+string(eem1*1d-46,format='(f5.2)')+$
     ' $\times$10!U46!N cm!U-3!N',/device,color=ct1,align=1,font_size=14)
-    !null=text(420,380,string(const,format='(f5.2)')+'$\pm$'+string(econst,format='(f5.2)'),/device,color=ct1,align=1,font_size=14)
+    !null=text(420,380,string(const,format='(f5.2)')+'$ \pm $'+string(econst,format='(f5.2)'),/device,color=ct1,align=1,font_size=14)
 
   w.save,'fit_xspec_th1_dec14_r45.pdf',page_size=w.dimensions/100.
   w.close
