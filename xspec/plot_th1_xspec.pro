@@ -21,6 +21,8 @@ pro plot_th1_xspec
 
   ; FPMA and FPMB are systematically a little bit off so why an extra constant applied to one of them
   ; but this should be close to 1 if the fit is consistent for both FPMA and FPMB
+  const=xft[0].factor18
+  econst=0.5*(xft[0].efactor18[1]-xft[0].efactor18[0])
   print,'Constant confidence range: ',xft.efactor18
 
   ; Load in the file containing the output from the plotted and fitted spctra
@@ -65,7 +67,7 @@ pro plot_th1_xspec
     xtitle='',ytitle='count s!U-1!N keV!U-1!N',position=[0.175,0.3,0.975,0.94],/current,xtickformat='(a1)',/nodata)
 
   !null=plot(fitr[0]*[1,1],ylim,color='grey',lines=1,thick=1,/over,/current)
-  !null=plot(fitr[1]*[1,1],[ylim[0],0.1*ylim[1]],color='grey',lines=1,thick=1,/over,/current)
+  !null=plot(fitr[1]*[1,1],[ylim[0],0.05*ylim[1]],color='grey',lines=1,thick=1,/over,/current)
 
   for i=0,nid-1 do !null=plot(engs1[id[i]]*[1,1],[dtmin[id[i]],dtmax[id[i]]],thick=1,/over,/current)
   for i=0,nid-1 do !null=plot(engs1[id[i]]+[-de,de],data1[id[i]]*[1,1],thick=1,/over,/current)
@@ -89,10 +91,11 @@ pro plot_th1_xspec
 
   ;  !null=text(400,420,string(t1,format='(f5.2)')+'$\pm$'+$
   ;    string(et1,format='(f5.2)')+' MK ('+string(t1*kev2mk,format='(f5.2)')+' keV)',/device,color=ct1,align=1,font_size=14)
-  !null=text(400,430,string(t1,format='(f5.2)')+'$\pm$'+$
+  !null=text(420,430,string(t1,format='(f5.2)')+'$\pm$'+$
     string(et1,format='(f5.2)')+' MK',/device,color=ct1,align=1,font_size=14)
-  !null=text(400,405,string(em1*1d-46,format='(f5.2)')+'$\pm$'+string(eem1*1d-46,format='(f5.2)')+$
+  !null=text(420,405,string(em1*1d-46,format='(f5.2)')+'$\pm$'+string(eem1*1d-46,format='(f5.2)')+$
     ' $\times$10!U46!N cm!U-3!N',/device,color=ct1,align=1,font_size=14)
+  !null=text(420,380,string(const,format='(f5.2)')+'$\pm$'+string(econst,format='(f5.2)'),/device,color=ct1,align=1,font_size=14)  
 
     w.save,'fit_xspec_th1_dec14.pdf',page_size=w.dimensions/100.
   w.close
