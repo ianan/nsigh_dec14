@@ -16,7 +16,7 @@ For this example all my data is in: `~/data/ns_data/obs3_bg2/20001005_Sol_14345_
 
 2. In ds9 make the source region file, in this case a separate one for FPMA and FPMB, which are circular regions and the saved files are called `circ_R1A30.reg` and `circ_R1B30.reg`. Theses should have the same area.
 
-3. Within IDL can create a *_gti.fits for the time interested in, here doing 18:39 to 19:04. Presumably a way of doing this within HEASoft via Xtools/Xselect.
+3. Within SSWIDL can create a *_gti.fits for the time interested in, here doing 18:39 to 19:04. Presumably a way of doing this within HEASoft via Xtools/Xselect.
 
   ```
   t1=anytim('11-Dec-2014 18:39')-anytim('01-Jan-2010')
@@ -52,31 +52,26 @@ For this example all my data is in: `~/data/ns_data/obs3_bg2/20001005_Sol_14345_
 	
   ```
   xspec
-  @apec_th1_fit
+  @xspec_th1_fit
   ```
+  
+  Then you will need the final line `wdata dec14_apec1fit_r45.txt` manually as haven't worked out how to get this to work in the script, as using the iplot/pgplot subenvironment. One `exit` gets you back to the main XSPEC command line, another to exit the program completely.
   
   The output should look like:
   ```
-  Free parameters defined:
   ========================================================================
-Model constant<1>(vapec<2> + vapec<3>) Source No.: 1   Active/On
-Model Model Component  Parameter  Unit     Value
- par  comp
-                           Data group: 1
-   2    2   vapec      kT         keV      0.891035     +/-  3.09415E-02  
-  17    2   vapec      norm                1430.55      +/-  388.915      
-  18    3   vapec      kT         keV      0.351998     +/-  1.55806E-02  
-  33    3   vapec      norm                1.00187E+05  +/-  2.60474E+04  
+  Model constant<1>*vapec<2> Source No.: 1   Active/On
+  Model Model Component  Parameter  Unit     Value
+  par  comp
+                          Data group: 1
+  2    2   vapec      kT         keV      0.298905     +/-  3.47696E-03  
+  17    2   vapec      norm                1.12081E+05  +/-  9631.61      
                            Data group: 2
-  34    1   constant   factor              0.918235     +/-  3.49038E-02  
-________________________________________________________________________
+  18    1   constant   factor              1.12773      +/-  2.07976E-02
+  ________________________________________________________________________
 
   ```
-  And the units of norm are `norm=1e-14/(4\pi*(D(1+z))^2) \int n_e n_H dV` so `norm=3.5557e-42 \int n_e n_h dV` which gives the above as:
-  ```
-  10.34 MK/4.02e44
-  4.08 MK/2.82e46
-  ```
-  
-6. Plotting can be done in XSPEC but is not great looking so instead use something else like IDL or Python, the following script does it in SSWIDL, using the newer (>8.4) plotting functions  
+  And the units of norm are `norm=1e-14/(4\pi*(D(1+z))^2) \int n_e n_H dV` so `norm=3.5557e-42 \int n_e n_h dV`. The constant is the scaling factor between FPMA and FPMB as they have a small systematic difference. If the fit is consistent between the two then this value should be close to 1.0
+
+6. Plotting can be done in XSPEC but is not great looking so instead use something else like IDL or Python, the following script does it in SSWIDL, using the newer (>8.4) plotting functions. 
 
