@@ -1,6 +1,6 @@
 # XSPEC Analysis
 
-Rough guide to getting correct data into XSPEC then fitting from combination of nuproducts, XSPEC guides and Brian
+Rough guide to getting the data into XSPEC then fitting from combination of nuproducts, XSPEC guides and Brian
 
 This example is on the 11 Dec 2014 region from Matej's paper, which is over 18:39 to 19:04 and thankfully that time range is in just one CHU combination (CHU12).
 
