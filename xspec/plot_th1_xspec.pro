@@ -13,15 +13,17 @@ pro plot_th1_xspec
   emfact=3.5557d-42
   ; The variable names can change in the fits file depending on how you did the xspec,
   ; so double check the correct one, or actually exists!
-  t1=xft[0].kt2/kev2mk
-  ; Error calculation gives a range of the error so take half the width as the quoted sigma
+  ; For this can take the mean of the confidence range as the value
+    t1=0.5*(xft.ekt2[1]+xft.ekt2[0])/kev2mk;xft[0].kt2/kev2mk
+  ; For this can take half the width of the confidence range as the error
   et1=0.5*(xft.ekt2[1]-xft.ekt2[0])/kev2mk;t1-xft[0].ekt2[0]/kev2mk
-  em1=xft[0].norm17/emfact
+    
+  em1=0.5*(xft[0].enorm17[1]+xft[0].enorm17[0])/emfact;xft[0].norm17/emfact
   eem1=0.5*(xft[0].enorm17[1]-xft[0].enorm17[0])/emfact;em1-xft[0].enorm17[0]/emfact
 
   ; FPMA and FPMB are systematically a little bit off so why an extra constant applied to one of them
   ; but this should be close to 1 if the fit is consistent for both FPMA and FPMB
-  const=xft[0].factor18
+  const=0.5*(xft[0].efactor18[1]+xft[0].efactor18[0]);xft[0].factor18
   econst=0.5*(xft[0].efactor18[1]-xft[0].efactor18[0])
   print,'Constant confidence range: ',xft.efactor18
 
