@@ -1,0 +1,46 @@
+da 1:1 nu20001005001A06_cl_grade0_sr.pha 2:2 nu20001005001B06_cl_grade0_sr.pha
+statistic cstat
+setplot energy
+ignore *:0.-4.0 5.2-**
+# this means only 25\sigma min sig but through combining 3 bins
+setplot rebin 25 3
+cpd /xw
+pl
+
+mo const*vapec
+1.0 -0.1
+/*
+
+untie 18
+thaw 18
+
+renorm
+abund feld
+fit 1000
+
+#setplot group 1-2
+setplot add
+setplot xlog off
+pl ld rat
+
+# Show free parameters
+show free
+
+# Show fit values
+show fit
+
+# Want the errors calculated as well?
+error 2 17 18
+save model dec14_apec1fit_mod_r45_ng.xcm
+writefits dec14_apec1fit_mod_r45_ng.fits
+
+notice *: 2.0-7.0
+iplot ldata ufspec rat
+
+# To write spectra and fit to file for plotting elsewhere
+# need to run these lines manually - hence commented out
+# wdata dec14_apec1fit_r45_ng.txt
+# hard dec14_apec1_r45_ng.ps/cps
+# exit
+
+
