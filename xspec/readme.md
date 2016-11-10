@@ -71,7 +71,7 @@ For this example all my data is in: `~/data/ns_data/obs3_bg2/20001005_Sol_14345_
   ________________________________________________________________________
 
   ```
-  And the units of norm are `norm=1e-14/(4\pi*(D(1+z))^2) \int n_e n_H dV` so `norm=3.5557e-42 \int n_e n_h dV`. The constant is the scaling factor between FPMA and FPMB as they have a small systematic difference. If the fit is consistent between the two then this value should be close to 1.0
+  For this [APEC model](https://heasarc.gsfc.nasa.gov/xanadu/xspec/manual/XSmodelApec.html) the units of norm are `norm=1e-14/(4\pi*(D(1+z))^2) \int n_e n_H dV` so `norm=3.5557e-42 \int n_e n_h dV`. The constant is the scaling factor between FPMA and FPMB as they have a small systematic difference. If the fit is consistent between the two then this value should be close to 1.0
 
 6. Plotting can be done in XSPEC but is not great looking so instead use something else like IDL or Python, the following [script](https://github.com/ianan/nsigh_dec14/blob/master/xspec/plot_th1_xspec.pro) does it in SSWIDL, using the newer (>8.4) plotting functions. 
 
