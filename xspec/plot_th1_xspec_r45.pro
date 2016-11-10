@@ -15,19 +15,25 @@ pro plot_th1_xspec_r45
   emfact=3.5557d-42
   ; The variable names can change in the fits file depending on how you did the xspec,
   ; so double check the correct one, or actually exists!
-  ; For this can take the mean of the confidence range as the value
-  t1=0.5*(xft.ekt2[1]+xft.ekt2[0])/kev2mk;xft[0].kt2/kev2mk
-  ; For this can take half the width of the confidence range as the error
-  et1=0.5*(xft.ekt2[1]-xft.ekt2[0])/kev2mk;t1-xft[0].ekt2[0]/kev2mk
-
-  em1=0.5*(xft[0].enorm17[1]+xft[0].enorm17[0])/emfact;xft[0].norm17/emfact
-  eem1=0.5*(xft[0].enorm17[1]-xft[0].enorm17[0])/emfact;em1-xft[0].enorm17[0]/emfact
+  t1=xft[0].kt2/kev2mk
+  em1=xft[0].norm17/emfact
+  ; For this could take half the width of the confidence range as the error
+  ; CAREFUL - have a look at the confidence contours in the statistical surface
+  ; before just blinding doing this for the error estimate as assumes symmetrical spread
+  ; The fit over this range is noisy and complicated so give the uncertainties and upper/lower bounds instead
+  t1_cr=xft[0].ekt2/kev2mk
+  et1=0.5*(t1_cr[1]-t1_cr[0])
+  em1_cr=xft[0].enorm17/emfact
+  eem1=0.5*(em1_cr[1]-em1_cr[0])
 
   ; FPMA and FPMB are systematically a little bit off so why an extra constant applied to one of them
   ; but this should be close to 1 if the fit is consistent for both FPMA and FPMB
-  const=0.5*(xft[0].efactor18[1]+xft[0].efactor18[0]);xft[0].factor18
-  econst=0.5*(xft[0].efactor18[1]-xft[0].efactor18[0])
-  print,'Constant confidence range: ',xft.efactor18
+  const_cr=xft[0].efactor18
+  const=xft[0].factor18
+  econst=0.5*(const_cr[1]-const_cr[0])
+  print,'TMK -- Confidence range:',t1, ' -- ',t1_cr
+  print,'EM -- Confidence range:',em1, ' -- ',em1_cr
+  print,'Constant --  Confidence range: ',const,' -- ', const_cr
 
   ; Load in the file containing the output from the plotted and fitted spctra
   ; Again the number of structure elements will change depending on fit model (how many components) and
@@ -93,15 +99,27 @@ pro plot_th1_xspec_r45
   !null=plot(fitr[0]*[1,1],[-4.5,4.5],color='grey',lines=1,thick=1,/over,/current)
   !null=plot(fitr[1]*[1,1],[-4.5,4.5],color='grey',lines=1,thick=1,/over,/current)
 
-  ;  !null=text(400,420,string(t1,format='(f5.2)')+'$\pm$'+$
-  ;    string(et1,format='(f5.2)')+' MK ('+string(t1*kev2mk,format='(f5.2)')+' keV)',/device,color=ct1,align=1,font_size=14)
-  !null=text(420,430,string(t1,format='(f5.2)')+'$ \pm $'+$
-    string(et1,format='(f5.2)')+' MK',/device,color=ct1,align=1,font_size=14)
-  !null=text(420,405,string(em1*1d-46,format='(f5.2)')+'$ \pm $'+string(eem1*1d-46,format='(f5.2)')+$
-    ' $\times$10!U46!N cm!U-3!N',/device,color=ct1,align=1,font_size=14)
-    !null=text(420,380,string(const,format='(f5.2)')+'$ \pm $'+string(econst,format='(f5.2)'),/device,color=ct1,align=1,font_size=14)
+  tl=string((t1-t1_cr[0]),format='(f5.2)')
+  tu=string((t1_cr[1]-t1 ),format='(f5.2)')
+  !null=text(420,435,string(t1,format='(f5.2)')+'$^{+'+tu+'}_{-'+tl+'}$ MK',/device,color=ct1,align=1,font_size=14)
+  
+;  !null=text(420,430,string(t1,format='(f5.2)')+'$ \pm $'+$
+;    string(et1,format='(f5.2)')+' MK',/device,color=ct1,align=1,font_size=14)
 
-  w.save,'fit_xspec_th1_dec14_r45.pdf',page_size=w.dimensions/100.
+  eml=string((em1-em1_cr[0])*1d-46,format='(f5.2)')
+  emu=string((em1_cr[1]-em1 )*1d-46,format='(f5.2)')
+  !null=text(420,405,string(em1*1d-46,format='(f5.2)')+'$^{+'+emu+'}_{-'+eml+'}$ $\times$10!U46!N cm!U-3!N',$
+    /device,color=ct1,align=1,font_size=14)
+  ;  !null=text(420,405,string(em1*1d-46,format='(f5.2)')+'$ \pm $'+string(eem1*1d-46,format='(f5.2)')+$
+  ;    ' $\times$10!U46!N cm!U-3!N',/device,color=ct1,align=1,font_size=14)
+
+
+  cnl=string((const-const_cr[0]),format='(f5.2)')
+  cnu=string((const_cr[1]-const ),format='(f5.2)')
+
+  !null=text(420,375,string(const,format='(f5.2)')+'$^{+'+cnu+'}_{-'+cnl+'}$',/device,color=ct1,align=1,font_size=14)
+
+    w.save,'fit_xspec_th1_dec14_r45.pdf',page_size=w.dimensions/100.
   w.close
 
   stop

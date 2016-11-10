@@ -19,5 +19,6 @@ fit 1000
 show fit
 
 error 2 17 18
-steppar 2 0.28 0.32 100 17 10000 200000 100
+#parallel steppar 4
+steppar 2 0.285 0.32 100 17 70000 160000 100
 plot contour
