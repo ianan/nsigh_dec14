@@ -48,16 +48,18 @@ For this example all my data is in: `~/data/ns_data/obs3_bg2/20001005_Sol_14345_
   nuproducts indir=./ instrument=FPMB steminputs=nu20001005001 outdir=./forxspec extended=no runmkarf=yes runmkrmf=yes infile=nu20001005001B06_cl_grade0.evt bkgextract=no srcregionfile=circ_R1B30.reg  attfile=./nu20001005001_att.fits hkfile=./nu20001005001B_fpm.hk usrgtifile=myB06_gti.fits
   ```
 
-5. Load them into XSPEC and do the fitting of one thermal simulataneously to FPMA and FPMB (thanks to Brian for this code) using the following [script](https://github.com/ianan/nsigh_dec14/blob/master/xspec/xspec_th1_fit.xcm)
+5. Load them into XSPEC and do the fitting of one thermal simulataneously to FPMA and FPMB (thanks to Brian for this code) using the following [script](https://github.com/ianan/nsigh_dec14/blob/master/xspec/xspec_th1_fit.xcm). 
 	
   ```
   xspec
   @xspec_th1_fit
   ```
   
-  Then you will need the final line `wdata dec14_apec1fit_r45.txt` manually as haven't worked out how to get this to work in the script, as using the iplot/pgplot subenvironment. One `exit` gets you back to the main XSPEC command line, another to exit the program completely.
+  Then you will need to execute the final line `wdata dec14_apec1fit_r45.txt` manually as haven't worked out how to get this to work in the script, as using the iplot/pgplot subenvironment. One `exit` gets you back to the main XSPEC command line, another to exit the program completely.
   
-  The output should look like:
+  Although the final plot/data output groups A and B together the data is not combined during fitting - the fit parameters are tied and they are simulatenously fitted.
+  
+  The output should look something like:
   ```
   ========================================================================
   Model constant<1>*vapec<2> Source No.: 1   Active/On
